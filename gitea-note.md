@@ -21,11 +21,12 @@ gitea下載
 wget -O gitea https://dl.gitea.com/gitea/1.23.7/gitea-1.23.7-linux-amd64
 chmod +x gitea
 ```
-準備環境
+準備環境  
 檢查是否安裝git。需Git version >= 2.0。
 ```sh
 git --version
 ```
+建立用戶
 ```sh# On Ubuntu/Debian:
 sudo adduser \
    --system \
