@@ -156,7 +156,7 @@ sudo systemctl enable gitea && sudo systemctl start gitea
 ## Git act_runner安裝
 
 [官方下載頁面](https://gitea.com/gitea/act_runner/releases)  
-[代碼倉庫](https://gitea.com/gitea/act_runner)
+[代碼倉庫](https://gitea.com/gitea/act_runner)  
 
 切換成root  
 `目前使用root問題比較少`
