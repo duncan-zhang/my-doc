@@ -3,9 +3,11 @@
 ## 前置安裝
 
 ### 1.Docker
+安裝(略)
 
 ### 2.Database
-本地數據庫
+1. 安裝(略)
+2. 本地數據庫
 ```sh
 CREATE USER 'gitea' IDENTIFIED BY 'gitea';
 CREATE DATABASE giteadb CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_bin';
@@ -20,7 +22,7 @@ wget -O gitea https://dl.gitea.com/gitea/1.23.7/gitea-1.23.7-linux-amd64
 chmod +x gitea
 ```
 準備環境
-检查是否安装 Git。要求 Git 版本 >= 2.0。
+檢查是否安裝git。需Git version >= 2.0。
 ```sh
 git --version
 ```
@@ -43,16 +45,21 @@ sudo mkdir /etc/gitea
 sudo chown root:git /etc/gitea
 sudo chmod 770 /etc/gitea
 ```
-配置 Gitea 工作路径
+配置Gitea文件到全局模式
 ```sh
 export GITEA_WORK_DIR=/var/lib/gitea/
 sudo cp gitea /usr/local/bin/gitea
+```
+添加bash自動補全
+```sh 
+wget https://raw.githubusercontent.com/go-gitea/gitea/main/contrib/autocompletion/bash_autocomplete
+sudo mv bash_autocomplete /usr/share/bash-completion/completions/gitea
 ```
 配置systemd
 ```sh
 sudo vim /etc/systemd/system/gitea.service
 ```
-內容
+Gitea.service context
 ```sh
 [Unit]
 Description=Gitea (Git with a cup of tea)
@@ -140,8 +147,7 @@ Environment=USER=git HOME=/home/git GITEA_WORK_DIR=/var/lib/gitea
 [Install]
 WantedBy=multi-user.target
 ```
-啟用自動啟用
+啟用服務&&自動啟用
 ```sh
-sudo systemctl enable gitea
-sudo systemctl start gitea
+sudo systemctl enable gitea && sudo systemctl start gitea
 ```
