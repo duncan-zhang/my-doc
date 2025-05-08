@@ -196,6 +196,13 @@ act_runner register \
 `INFO Registering runner, arch=amd64, os=linux, version=v0.2.11.`  
 `DEBU Successfully pinged the Gitea instance server`  
 `INFO Runner registered successfully.`  
+3. 將`.runner`配置
+```sh
+#檢查是否有.runner
+sudo ls -al 
+sudo mkdir /var/lib/act_runner
+sudo mv .runner /var/lib/act_runner
+```
 
 使用Systemd啟動act_runner
 1. 建置systemd.service
@@ -216,7 +223,7 @@ WorkingDirectory=/var/lib/act_runner
 TimeoutSec=0
 RestartSec=10
 Restart=always
-User=act_runner
+User=root
 
 [Install]
 WantedBy=multi-user.target
