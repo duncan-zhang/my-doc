@@ -192,10 +192,6 @@ act_runner register \
   --name <your_name> \
   --config /etc/act_runner/config.yaml
 ```
-表示成功  
-`INFO Registering runner, arch=amd64, os=linux, version=v0.2.11.`  
-`DEBU Successfully pinged the Gitea instance server`  
-`INFO Runner registered successfully.`  
 3. 將`.runner`配置
 ```sh
 #檢查是否有.runner
