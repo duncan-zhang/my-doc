@@ -193,9 +193,9 @@ act_runner register \
   --config /etc/act_runner/config.yaml
 ```
 表示成功  
-`INFO Registering runner, arch=amd64, os=linux, version=v0.2.11.`
-`DEBU Successfully pinged the Gitea instance server`
-`INFO Runner registered successfully.`
+`INFO Registering runner, arch=amd64, os=linux, version=v0.2.11.`  
+`DEBU Successfully pinged the Gitea instance server`  
+`INFO Runner registered successfully.`  
 
 使用Systemd啟動act_runner
 1. 建置systemd.service
