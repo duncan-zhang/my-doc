@@ -152,3 +152,83 @@ WantedBy=multi-user.target
 ```sh
 sudo systemctl enable gitea && sudo systemctl start gitea
 ```
+
+## Git act_runner安裝
+
+[官方下載頁面] (https://gitea.com/gitea/act_runner/releases)
+[Gitea act_runner代碼倉庫](https://gitea.com/gitea/act_runner)
+
+切換成root  
+`目前使用root問題比較少`
+```sh
+sudo -i
+```
+
+軟體下載
+```sh
+wget -O act_runner  https://gitea.com/gitea/act_runner/releases/download/v0.2.11/act_runner-0.2.11-linux-amd64
+chmod +x act_runner
+./act_runner --version
+#act_runner version v0.2.11
+```
+全域配置
+```sh
+mv act_runner /usr/local/bin/
+act_runner --version
+```
+設定檔配置config.yaml
+1. 產出原生配置檔
+```sh
+sudo mkdir /etc/act_runner
+act_runner generate-config > /etc/act_runner/config.yaml
+```
+2. 修改配置檔
+`非互動式配置`
+```sh 
+act_runner register \
+  --no-interactive \
+  --instance http://127.0.0.1:3000 \
+  --token IXQgA6iBwNGZ33mZFa47n2peTWKHRSouxdAJnD7l \
+  --name local_runner \
+  --config /etc/act_runner/config.yaml
+```
+表示成功  
+`INFO Registering runner, arch=amd64, os=linux, version=v0.2.11.`
+`DEBU Successfully pinged the Gitea instance server`
+`INFO Runner registered successfully.`
+
+使用Systemd啟動act_runner
+1. 建置systemd.service
+```sh
+sudo vim /etc/systemd/system/act_runner.service
+```
+2. systemd context
+```sh
+[Unit]
+Description=Gitea Actions runner
+Documentation=https://gitea.com/gitea/act_runner
+After=docker.service
+
+[Service]
+ExecStart=/usr/local/bin/act_runner daemon --config /etc/act_runner/config.yaml
+ExecReload=/bin/kill -s HUP $MAINPID
+WorkingDirectory=/var/lib/act_runner
+TimeoutSec=0
+RestartSec=10
+Restart=always
+User=act_runner
+
+[Install]
+WantedBy=multi-user.target
+```
+加載新的 systemd 單元文件
+```sh
+sudo systemctl daemon-reload
+```
+3. 啟用服務&&自動啟用
+```sh
+sudo systemctl enable act_runner && sudo systemctl start act_runner 
+```
+```sh
+sudo systemctl status act_runner 
+```
