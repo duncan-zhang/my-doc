@@ -188,8 +188,8 @@ act_runner generate-config > /etc/act_runner/config.yaml
 act_runner register \
   --no-interactive \
   --instance http://127.0.0.1:3000 \
-  --token IXQgA6iBwNGZ33mZFa47n2peTWKHRSouxdAJnD7l \
-  --name local_runner \
+  --token <token_id> \
+  --name <your_name> \
   --config /etc/act_runner/config.yaml
 ```
 表示成功  
