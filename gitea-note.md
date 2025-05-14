@@ -6,7 +6,18 @@
 安裝(略)
 
 ### 2.Database
-1. 安裝(略)
+1. 安裝
+```sh
+sudo apt install mysql-server -y
+sudo mysql
+sudo sed -i 's/^bind-address\s*=\s*127\.0\.0\.1/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+sudo systemctl restart mysql.service
+```
+```sh
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'my_password';
+FLUSH PRIVILEGES;
+exit
+```
 2. 本地數據庫
 ```sh
 CREATE USER 'gitea' IDENTIFIED BY 'gitea';
@@ -49,7 +60,7 @@ sudo chmod 770 /etc/gitea
 配置Gitea文件到全局模式
 ```sh
 export GITEA_WORK_DIR=/var/lib/gitea/
-sudo cp gitea /usr/local/bin/gitea
+sudo mv gitea /usr/local/bin/gitea
 ```
 添加bash自動補全
 ```sh 
