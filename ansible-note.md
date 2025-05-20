@@ -21,6 +21,10 @@ sudo vim /etc/ansilble/hosts
 [local] #自訂名稱
 server1 ansible_ssh_host=127.0.0.1  ansible_ssh_port=22
 ```
+- `ansible_ssh_user=<username>` 連線用戶
+- `ansible_ssh_pass=<passwd>` 連線密碼
+- `ansible_ssh_private_key_file=</path>` 指定金鑰
+
 建立測試yml
 ```sh
 vim hello.yml
