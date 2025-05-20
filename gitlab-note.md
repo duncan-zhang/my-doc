@@ -42,10 +42,28 @@ cat /etc/gitlab/initial_root_password
 ```
 登入網頁
 
----
 ### 常用指令
 ```sh
 sudo gitlab-ctl status
 sudo gitlab-ctl restart
 sudo gitlab-ctl reconfigure
+```
+
+---
+
+## Install Gitlab Runner on Ubuntu
+安裝
+```sh
+curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
+sudo apt install gitlab-runner
+```
+指定版號安裝
+```sh
+sudo apt-cache madison gitlab-runner
+sudo apt install gitlab-runner=17.7.1-1 gitlab-runner-helper-images=17.7.1-1
+```
+更新
+```sh
+sudo apt update
+sudo apt install gitlab-runner
 ```
