@@ -26,7 +26,7 @@ sudo EXTERNAL_URL="https://gitlab.example.com" apt install gitlab-ee=16.2.3-ee.0
 ```sh
 sudo apt-mark hold gitlab-ee
 ```
-3.配置網頁登入域名(選用)
+3. 配置網頁登入域名(選用)
 ```sh
 sudo vim /etc/gitlab/gitlab.rb
 ```
