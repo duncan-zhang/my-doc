@@ -72,12 +72,18 @@ sudo apt install gitlab-runner
 #交互式配置
 sudo gitlab-runner register
 #
-#Enter the GitLab instance URL (for example, https://gitlab.com/):<IP or Domain>
-#Enter the registration token:<Get from Brower CICD Runner token>
-#Enter a description for the runner:<Runner_Name>
-#Enter optional maintenance note for the runner:<docker>
-#Enter the default Docker image (for example, ruby:2.7):<ubuntu:lastest>
-#
+#Enter the GitLab instance URL (for example, https://gitlab.com/):
+#<IP or Domain>
+#Enter the registration token:
+#<Get from Brower CICD Runner token>
+#Enter a description for the runner:
+#<defaut_hostname>
+#Enter tags for the runner (comma-separated):
+#<Skip or input>
+#Enter optional maintenance note for the runner:
+#<docker>
+#Enter the default Docker image (for example, ruby:2.7):
+#<ubuntu:lastest>
 #Runner registered successfully. Feel free to start it, but if it's running already the config should be automatically reloaded!
 #Configuration (with the authentication token) was saved in "/etc/gitlab-runner/config.toml" 
 ```
