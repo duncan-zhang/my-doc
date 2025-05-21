@@ -52,18 +52,46 @@ sudo gitlab-ctl reconfigure
 ---
 
 ## Install Gitlab Runner on Ubuntu
-安裝
+1. 安裝
 ```sh
 curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
-sudo apt install gitlab-runner
+sudo apt install gitlab-runner -y
 ```
-指定版號安裝
+- 指定版號安裝
 ```sh
 sudo apt-cache madison gitlab-runner
 sudo apt install gitlab-runner=17.7.1-1 gitlab-runner-helper-images=17.7.1-1
 ```
-更新
+- 更新
 ```sh
 sudo apt update
 sudo apt install gitlab-runner
+```
+2. 配置runner
+```sh
+#交互式配置
+sudo gitlab-runner register
+#
+#Enter the GitLab instance URL (for example, https://gitlab.com/):<IP or Domain>
+#Enter the registration token:<Get from Brower CICD Runner token>
+#Enter a description for the runner:<Runner_Name>
+#Enter optional maintenance note for the runner:<docker>
+#Enter the default Docker image (for example, ruby:2.7):<ubuntu:lastest>
+#
+#Runner registered successfully. Feel free to start it, but if it's running already the config should be automatically reloaded!
+#Configuration (with the authentication token) was saved in "/etc/gitlab-runner/config.toml" 
+```
+3. 簡易測試Runner
+新增`.gitlab-ci.yml`
+```sh
+stages:
+  - test
+  
+test-job:
+  stage: test
+  script:
+    - echo "Runner 正常啟動"
+    - echo "目前的時間：$(date)"
+    - uname -a
+    - whoami
 ```
