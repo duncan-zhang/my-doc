@@ -92,7 +92,8 @@ sudo gitlab-runner register
 ```sh
 stages:
   - test
-  
+  # tags:
+  #   - alpine
 test-job:
   stage: test
   script:
