@@ -38,7 +38,7 @@ sudo gitlab-ctl reconfigure
 
 4. 獲取`root passwd`登入網頁
 ```sh
-cat /etc/gitlab/initial_root_password
+sudo cat /etc/gitlab/initial_root_password
 ```
 登入網頁
 
@@ -102,3 +102,62 @@ test-job:
     - uname -a
     - whoami
 ```
+## Install Gitlab Runner on docker
+1. 建立資料夾及docker-compose.yml
+```sh
+mkdir -p gitlab-runner
+cd gitlab-runner
+vim docker-compose.yml
+```
+2. 撰寫docker-compose.yml
+```yaml
+version: '3.8'
+
+services:
+  gitlab-runner01:
+    image: gitlab/gitlab-runner:latest
+    container_name: gitlab-runner01
+    restart: always
+    volumes:
+      - ./config/runner01:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+  gitlab-runner02:
+    image: gitlab/gitlab-runner:latest
+    container_name: gitlab-runner02
+    restart: always
+    volumes:
+      - ./config/runner02:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+```
+- `./config/runner0X`: 將`config.toml`便於管理
+- `docker.sock`: 可對主機docker進行呼叫
+
+3. 建立gitlab與runner連線
+```sh
+docker exec -it gitlab-runner01 gitlab-runner register \
+  --non-interactive \
+  --url "<gitlab_domain>" \
+  --registration-token "<gitlab-runner_token>" \
+  --executor "docker" \
+  --description "runner01" \
+  --docker-image "alpine:latest" \
+  --tag-list "alpine,runner01"
+```
+- 權限許可情況下可登入 gitlab WebUI -> priojects -> <your_project> -> settings -> CI/CD -> Runners
+
+4. 修改gitlab-runner的`config.toml`
+```sh 
+...
+[runners.docker]
+volumes = ["/cache", "/builds/runner01:/builds"] #mount bullds到主機中
+...
+```
+- `builds`: 將路徑掛於主機以便排查問題。
