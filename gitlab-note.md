@@ -154,6 +154,7 @@ docker exec -it gitlab-runner01 gitlab-runner register \
 - 權限許可情況下可登入 gitlab WebUI -> priojects -> <your_project> -> settings -> CI/CD -> Runners
 
 4. 修改gitlab-runner的`config.toml`
+#### build路徑mount
 ```sh 
 ...
 [runners.docker]
@@ -161,3 +162,14 @@ volumes = ["/cache", "/builds/runner01:/builds"] #mount bullds到主機中
 ...
 ```
 - `builds`: 將路徑掛於主機以便排查問題。
+
+#### Docker image pull 優化
+```sh
+...
+[runners.docker]
+pull_policy = "if-not-present"
+...
+```
+- `always` :*每次都會強制從 Docker registry（如 Docker Hub）拉取最新的 image，即使本地已經存在
+- `if-not-present` : 只有在本地不存在該 image 時才會從遠端拉取（最常用，節省時間與頻寬）
+- `never` : 永遠不會從 registry 拉取 image，如果本地沒有會導致錯誤
