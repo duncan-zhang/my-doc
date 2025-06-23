@@ -1,7 +1,7 @@
 # Caddy Web Server
 
-## 安裝Install
-[官方安裝說明](https://caddyserver.com/docs/install)
+## Install Caddy Web Server
+[官方安裝](https://caddyserver.com/docs/install)
 
 ```bash
 sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
@@ -35,6 +35,122 @@ sudo caddy list-modules
 
 ```bash
 sudo systemctl restart caddy
+```
+
+---
+## Caddyfile範本篇
+
+#### Unity專案示範
+- `http3`關閉
+- url 路徑配置
+- 跨域讀取
+- 壓縮配置
+
+```sh
+{
+	grace_period 5s
+	shutdown_delay 1s
+
+    # 關閉預設 HTTP/3
+	servers :80 {
+		protocols h1 h2
+	}
+	servers :443 {
+		protocols h1 h2
+	}
+}
+
+domain.com {
+
+	encode gzip br
+
+	# 壓縮檔案 MIME
+    # 為Unity專案下的壓縮示範
+    # 為所有 .js 檔案設置正確的 Content-Type
+    header /.js Content-Type application/javascript
+	@jsBr path_regexp \.js\.gz$
+	header @jsBr Content-Encoding gzip
+	header @jsBr Content-Type application/javascript
+
+    # 為 .wasm 檔案設置正確的 Content-Type
+    header /.wasm Content-Type application/wasm
+	@wasmBr path_regexp \.wasm\.gz$
+	header @wasmBr Content-Encoding gzip
+	header @wasmBr Content-Type application/wasm
+
+    # 為 .data 檔案設置正確的 Content-Type
+    header /.data Content-Type application/octet-stream
+	@dataBr path_regexp \.data\.gz$
+	header @dataBr Content-Encoding gzip
+	header @dataBr Content-Type application/octet-stream
+
+    # CORS 配置
+	header Access-Control-Allow-Origin "https://domain.com"
+	header Access-Control-Allow-Methods "GET, OPTIONS"
+	header Access-Control-Allow-Headers "Content-Type"
+	@options method OPTIONS
+	respond @options 204
+
+	# API Proxy反向代理
+	handle /swagger* {
+	    reverse_proxy localhost:16888
+	}
+	handle /WeatherForecast/* {
+	    reverse_proxy localhost:16888
+	}
+	handle /api/* {
+	    reverse_proxy localhost:16888
+	}
+	handle /ws {
+	    reverse_proxy localhost:16888
+	}
+
+    #強導`/web02`->`/web02/`
+	redir /web02 /web02/
+
+	# web02
+	@web02 path /web02/*
+	handle @web02 {
+        #去掉前綴域名
+        uri strip_prefix /web02
+		root * /var/www/web02
+		try_files {path} /index.html
+		file_server
+	}
+
+
+	# 預設主頁
+	handle  {
+	    root * /var/www/web01/
+	    try_files {path} /index.html
+	    file_server
+	}
+        
+	handle_errors {
+	    header -Via
+	    respond "" {http.error.status_code}
+	}
+}
+
+domain2.com {
+	root * /var/www/Addressable
+
+	file_server
+
+	# CORS 限制：只允許 domain.com 載入
+	header Access-Control-Allow-Origin "https://domain.com"
+	header Access-Control-Allow-Methods "GET, OPTIONS"
+	header Access-Control-Allow-Headers "Content-Type"
+
+	@options method OPTIONS
+	respond @options 204
+
+	encode gzip br
+
+	handle_errors {
+		respond "{http.error.status_code}" {http.error.status_code}
+	}
+}
 ```
 
 ---
