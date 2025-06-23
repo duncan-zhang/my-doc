@@ -91,7 +91,7 @@ domain.com {
     @options method OPTIONS
     respond @options 204
 
-	# API Proxy反向代理
+    # API Proxy反向代理
     handle /swagger* {
         reverse_proxy localhost:16888
     }
