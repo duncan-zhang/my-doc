@@ -48,15 +48,15 @@ sudo systemctl restart caddy
 
 ```sh
 {
-	grace_period 5s
-	shutdown_delay 1s
+    grace_period 5s
+    shutdown_delay 1s
 
     # 關閉預設 HTTP/3
-	servers :80 {
-		protocols h1 h2
+    servers :80 {
+        protocols h1 h2
 	}
-	servers :443 {
-		protocols h1 h2
+    servers :443 {
+        protocols h1 h2
 	}
 }
 
@@ -64,11 +64,11 @@ domain.com {
 
 	encode gzip br
 
-	# 壓縮檔案 MIME
+    # 壓縮檔案 MIME
     # 為Unity專案下的壓縮示範
     # 為所有 .js 檔案設置正確的 Content-Type
     header /.js Content-Type application/javascript
-	@jsBr path_regexp \.js\.gz$
+    @jsBr path_regexp \.js\.gz$
 	header @jsBr Content-Encoding gzip
 	header @jsBr Content-Type application/javascript
 
