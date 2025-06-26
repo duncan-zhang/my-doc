@@ -38,7 +38,7 @@ build_job:
     - |
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" \
         --upload-file tls-dashboard.tar.gz \
-       "http://10.0.101.37/api/v4/projects/$CI_PROJECT_ID/packages/generic/tls-dashboard/$CI_COMMIT_SHA/tls-dashboard.tar.gz"
+       "http://<gitlab-domain>/api/v4/projects/$CI_PROJECT_ID/packages/generic/tls-dashboard/$CI_COMMIT_SHA/tls-dashboard.tar.gz"
 
 trigger-cd:
   stage: trigger-cd
@@ -51,7 +51,7 @@ trigger-cd:
         --form "ref=main" \
         --form "variables[BUILD_VERSION]=$CI_COMMIT_SHA" \
         --form "variables[SOURCE_PROJECT_ID]=$CI_PROJECT_ID" \
-        http://10.0.101.37/api/v4/projects/<CD_project_ID>/trigger/pipeline
+        http://<gitlab-domain>/api/v4/projects/<CD_project_ID>/trigger/pipeline
   tags:
     - alpine
 ```
@@ -76,7 +76,7 @@ trigger-cd:
         --form "token=<pipeline trigger tokens>" \
         --form "ref=main" \
         --form "variables[DEPLOY_TARGET]=A" \
-        http://10.0.101.37/api/v4/projects/<CD_project_ID>/trigger/pipeline
+        http://<gitlab-domain>/api/v4/projects/<CD_project_ID>/trigger/pipeline
   tags:
     - alpine
 ```
@@ -110,7 +110,7 @@ deploy_job:
     - echo "SOURCE_PROJECT_ID = $SOURCE_PROJECT_ID"
     - |
       curl --header "PRIVATE-TOKEN: $ci_proj_token" \
-      "http://10.0.101.37/api/v4/projects/$SOURCE_PROJECT_ID/packages/generic/tls-dashboard/$BUILD_VERSION/tls-dashboard.tar.gz" \
+      "http://<gitlab-domain>/api/v4/projects/$SOURCE_PROJECT_ID/packages/generic/tls-dashboard/$BUILD_VERSION/tls-dashboard.tar.gz" \
       -o tls-dashboard.tar.gz
       tar xzvf tls-dashboard.tar.gz
     - ls -lh tls-dashboard.tar.gz
@@ -162,7 +162,7 @@ cd/
          --form "token=<pipeline trigger tokens>" \
          --form "ref=main" \
          --form "variables[DEPLOY_TARGET]=A" \
-         http://10.0.101.37/api/v4/projects/<CD_project_ID>/trigger/pipeline
+         http://<gitlab-domain>/api/v4/projects/<CD_project_ID>/trigger/pipeline
      ```
 
 #### .gitlab-ci.yml
@@ -205,5 +205,71 @@ deploy-job:
 │   └── cert-check-cd.tmp
 ├── ci
 │   ├── cert-checker
-│   └── cert-checker.tmp
+└── └── cert-checker.tmp
 ```
+
+#### 2. CD API呼叫的限制方式
+
+##### .gitlab-ci.yml
+```yml
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger" || $CI_PIPELINE_SOURCE == "api"'
+      when: always
+    - when: never
+
+include:
+  - local: 'deploy/deploy-A.yml'
+  - local: 'deploy/deploy-B.yml'
+```
+- `$CI_PIPELINE_SOURCE` : API呼叫來源種類
+
+**其它可用的 pipeline 來源參數**
+| 來源                | 變數值                 |
+| ------------------- | --------------------- |
+| push                | push                  |
+| merge request event | merge_request_event   |
+| trigger             | trigger               |
+| schedule            | schedule              |
+| web                 | web                   |
+| api                 | api                   |
+| external            | external              |
+| pipeline            | pipeline              |
+| parent_pipeline     | parent_pipeline       |
+| chat                | chat                  |
+
+#### 3. 關於 CI 後打包結果該如何讓 CD 抓到資料
+基於gitlab安全政策的關係，跨Group是無法直接獲取打包後資料，解法如下:
+1. 用 GitLab Package Registry 傳遞 artifacts(gitlab原生方案)
+  - 優點:
+    - ✅ 原生支援：GitLab 內建、跨 group 專案都可用
+    - ✅ 權限細緻：用 project access token 控管存取
+    - ✅ 版本控管：支援多版本、多檔案、API 易用
+    - ✅ 不佔用 repo 歷史：不會讓 git repo 膨脹
+    - ✅ 自動清理：可設保留天數/數量
+  - 缺點:
+    - ⚠️ 需 API 操作：需手動寫 curl 或腳本（但容易自動化）
+    - ⚠️ 需管理 token：需要有存取權限的 token，管理稍麻煩
+    - ⚠️ 社群版有流量/容量限制（企業版可調整）
+2. SCP/S3/FTP 共享資料夾 作為 artifacts 中繼站
+  - 優點:
+    - ✅ 彈性高：不限於 GitLab，檔案、路徑都自訂
+    - ✅ 適合大檔案/多環境：有現成檔案伺服器或 NAS 可直接用
+    - ✅ 可獨立管理存取權限
+  - 缺點:
+    - ⚠️ 需維護額外主機或服務（運維成本）
+    - ⚠️ 安全控管自行負責（權限、加密、認證）
+    - ⚠️ SCP/SSH 易受帳號權限、網路、互信設定影響 
+    - ⚠️ CI/CD yaml 必須嵌入密碼/token，管理需謹慎
+3. docker環境下在CI打包後，scp/rsync2傳送到主機層
+  - 優點:
+    - ✅ 不用預先設定 volume，只要主機開 ssh/scp 即可
+    - ✅ 靈活：可同時傳給多台主機、分多環境
+    - ✅ 權限明確分離（host 檔案由 ssh 控制）
+    - ✅ 適合多 runner/多主機場景
+  - 缺點:
+    - ⚠️ 效能較低（走網路層傳輸，雖然本機會很快，但還是多了一層 overhead）
+    - ⚠️ 密碼/金鑰管理要小心（要存進 CI/CD secrets，建議用金鑰優於帳密）
+    - ⚠️ 防火牆/SSH 設定須允許本地登入
+    - ⚠️ 容易遇到權限問題（如資料夾歸屬、寫入權限）
+
