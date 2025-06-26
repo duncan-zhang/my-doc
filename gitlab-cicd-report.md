@@ -1,8 +1,8 @@
 # Gitlab Detached CI/CD Report
 
 ## 1. 測試目標
-1. 目標: 將CI(Build、Test)與CD(Deploy)分成不同Group，並讓CI打包後資料能安全、有效地傳遞給CD進行部署。
-2. 限制條件: 不經第三方雲端服務(如 S3、GCS、阿里雲等)，也不希望artifacts/variables洩漏或權限交錯。
+- **目標**: 將CI(Build、Test)與CD(Deploy)分成不同Group，並讓CI打包後資料能安全、有效地傳遞給CD進行部署。
+- **限制條件**: 不經第三方雲端服務(如 S3、GCS、阿里雲等)，也不希望artifacts/variables洩漏或權限交錯。
 
 ---
 
