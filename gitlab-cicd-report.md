@@ -13,8 +13,8 @@
 - **CD 專案（Group-B）**：負責從 CI 專案取得 artifacts，執行部署流程。
 
 ### 2.2. Pipeline 串接方式
-- CI pipeline 完成後，透過 GitLab Trigger API 或 cURL 主動觸發 CD pipeline，並帶入關鍵變數（如 commit sha、build version 等）。
-- CD pipeline 透過 API 或專案 Access Token，利用 `curl` 指令下載指定 artifacts，或用 scp/rsync 等同步檔案。
+- CI pipeline 完成後，透過 GitLab Trigger API 或 curl 主動觸發 CD pipeline，並帶入關鍵變數（如 commit sha、build version 等）。
+- CD pipeline 透過 API 或專案 Access Token，利用 `curl` 指令下載指定 artifacts。
 
 ### 2.3. Artifacts 傳遞與佈署
 - CI pipeline 中將 build 產物封裝成 artifacts（如 tar.gz、zip）。
