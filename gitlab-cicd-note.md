@@ -1,9 +1,5 @@
 # Gitlab CI/CD pipeline note
 
----
-## CI CD detached 
-- **環境** : Cd
-
 ### CI configuration
 
 #### gitlab 
@@ -67,7 +63,7 @@ trigger-cd:
  - `pipeline trigger tokens` : 由 CD 提供此token
  - `CD_project_ID` : 需確認 CD 專案 ID 號碼
 
-#### 額外補充 CI執行呼叫特定CD deploy.yml
+#### 額外補充 CI 執行呼叫特定 CD deploy.yml
 ```yml
 ...
 trigger-cd:
@@ -159,15 +155,15 @@ cd/
 1. 若要達成透過`.gitlab-ci.yml`去執行deploy中的yml，目前已知必須透過建立資料夾的方式去執行才能成功指定yml
 2. 當把deploy的yml放在同一層資料中，會出現`bug`，結果會是A、B無法執行，僅C是可以執行的
 3. 是如何驗證出bug呢?
-  - 將deploy-A、B、C三份文件合併成一份`.gitlab-ci.yml`時，執行是可正常指定ABC的
-  - 可用curl直接對CD的API呼叫
-    ```yml
-          curl --request POST \
-        --form "token=<pipeline trigger tokens>" \
-        --form "ref=main" \
-        --form "variables[DEPLOY_TARGET]=A" \
-        http://10.0.101.37/api/v4/projects/<CD_project_ID>/trigger/pipeline
-    ```
+   - 將deploy-A、B、C三份文件合併成一份`.gitlab-ci.yml`時，執行是可正常指定ABC的
+   - 可用curl直接對CD的API呼叫
+     ```yml
+           curl --request POST \
+         --form "token=<pipeline trigger tokens>" \
+         --form "ref=main" \
+         --form "variables[DEPLOY_TARGET]=A" \
+         http://10.0.101.37/api/v4/projects/<CD_project_ID>/trigger/pipeline
+     ```
 
 #### .gitlab-ci.yml
 ```yml
