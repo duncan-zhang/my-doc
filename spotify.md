@@ -37,6 +37,7 @@ device_name = "ubuntu_cli_spotify"
 backend = "pulseaudio"
 volume_controller = "softvol"
 no_audio_cache = true
+use_mpris = false
 ```
 啟動Spotifyd:
 ```sh
