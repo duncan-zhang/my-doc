@@ -1,9 +1,9 @@
 # Spotify install on Ubuntu
 
-# 官方Gitub
+## 官方Gitub
 [spotifyd](https://github.com/Spotifyd/spotifyd)
 
-# Spotifyd 安裝指令詳解
+## Spotifyd 安裝指令詳解
 ```sh
 sudo apt update
 
