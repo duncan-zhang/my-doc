@@ -179,7 +179,7 @@ shutdown_timeout = 0
     [runners.cache.gcs]
     [runners.cache.azure]
   [runners.feature_flags]
-    FF_USE_FASTZIP = true #可加速壓縮讀寫
+    FF_USE_FASTZIP = true 
   [runners.docker]
     tls_verify = false
     image = "alpine:latest"
@@ -187,13 +187,15 @@ shutdown_timeout = 0
     disable_entrypoint_overwrite = false
     oom_kill_disable = false
     disable_cache = false
-    volumes = ["/cache/runner01:/cache", "/builds/runner01:/builds"] #cache與builds掛於主機中查閱
-    pull_policy = ["if-not-present"] #當本機沒有吻合image時才拉取
+    volumes = ["/cache/runner01:/cache", "/builds/runner01:/builds"] 
+    pull_policy = ["if-not-present"] 
     shm_size = 0
     network_mtu = 0
 ```
-- `builds`: 將路徑掛於主機以便排查問題。
-
+- `FF_USE_FASTZIP` : 預設是gzip，透過指令可啟用fastzip，加速加解壓縮效率
+- `builds`: 將builds路徑掛於主機以便排查問題。
+- `cache` : 將cache路徑掛於主機以便排查問題。
+- `pull_policy` : 當本機沒有吻合doker image時才拉取
 #### Docker image pull 優化
 ```sh
 ...
