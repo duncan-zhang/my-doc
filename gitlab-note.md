@@ -157,9 +157,41 @@ docker exec -it gitlab-runner01 gitlab-runner register \
 #### build路徑mount
 ```sh 
 ...
-[runners.docker]
-volumes = ["/cache", "/builds/runner01:/builds"] #mount bullds到主機中
-...
+[runners.docker]concurrent = 1
+check_interval = 0
+connection_max_age = "15m0s"
+shutdown_timeout = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "runner01"
+  output_limit = 10000
+  url = "<gitlab_domain>"
+  id = 1
+  token = "<gitlab-runner_token>"
+  token_obtained_at = 2025-06-09T06:23:31Z 
+  token_expires_at = 0001-01-01T00:00:00Z
+  executor = "docker"
+  [runners.cache]
+    MaxUploadedArchiveSize = 0
+    [runners.cache.s3]
+    [runners.cache.gcs]
+    [runners.cache.azure]
+  [runners.feature_flags]
+    FF_USE_FASTZIP = true #可加速壓縮讀寫
+  [runners.docker]
+    tls_verify = false
+    image = "alpine:latest"
+    privileged = false
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    disable_cache = false
+    volumes = ["/cache/runner01:/cache", "/builds/runner01:/builds"] #cache與builds掛於主機中查閱
+    pull_policy = ["if-not-present"] #當本機沒有吻合image時才拉取
+    shm_size = 0
+    network_mtu = 0
 ```
 - `builds`: 將路徑掛於主機以便排查問題。
 
