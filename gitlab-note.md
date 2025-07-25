@@ -193,6 +193,9 @@ shutdown_timeout = 0
     network_mtu = 0
 ```
 - `FF_USE_FASTZIP` : 預設是gzip，透過指令可啟用fastzip，加速加解壓縮效率
+  搭配`.gitlab-ci.yml`中配置下方參數
+  - CACHE_COMPRESSION_LEVEL: "fastest"
+  - CACHE_COMPRESSION_FORMAT: tarzstd
 - `builds`: 將builds路徑掛於主機以便排查問題。
 - `cache` : 將cache路徑掛於主機以便排查問題。
 - `pull_policy` : 當本機沒有吻合doker image時才拉取
