@@ -156,7 +156,6 @@ docker exec -it gitlab-runner01 gitlab-runner register \
 4. 修改gitlab-runner的`config.toml`
 #### build路徑mount
 ```sh 
-...
 [runners.docker]concurrent = 1
 check_interval = 0
 connection_max_age = "15m0s"
