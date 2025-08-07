@@ -1,19 +1,5 @@
 # 🌐 OpenVPN 安裝與設定指南（Ubuntu）
 
-## 📚 目錄
-
-- [安裝 OpenVPN](#安裝-openvpn)
-- [互動式安裝流程說明](#互動式安裝流程說明)
-- [安裝完成後操作](#安裝完成後操作)
-- [基本操作與服務管理](#基本操作與服務管理)
-- [伺服器設定檔 server.conf 範例](#伺服器設定檔-serverconf-範例)
-- [新增／查詢／刪除用戶](#新增查詢刪除用戶)
-- [指定用戶內網 IP](#指定用戶內網-ip)
-- [補充：openvpn vs openvpn@server](#補充openvpn-vs-openvpnserver)
-- [（可選）建立指定路由配置](#可選建立指定路由配置)
-
----
-
 ## 🛠️ 安裝 OpenVPN
 
 使用 [angristan/openvpn-install](https://github.com/angristan/openvpn-install)
