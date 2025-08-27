@@ -43,13 +43,13 @@ source ~/.bashrc
 [Wed Aug 27 05:28:13 PM CST 2025] No EAB credentials found for ZeroSSL, let's obtain them
 ```
   - 此錯誤表示是因與zerossl驗證產生錯誤，直接改用 Let’s Encrypt(繞過 ZeroSSL)  
-  ```sh
-    #解決方法 
-    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-    ~/.acme.sh/acme.sh --register-account \
-    -m duncan751122@fiami.com.tw \
-    --accountkey ./account.key
-    ```  
+```sh
+  #解決方法 
+  ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+  ~/.acme.sh/acme.sh --register-account \
+  -m duncan751122@fiami.com.tw \
+  --accountkey ./account.key
+```  
 
   如果成功，會看到類似：
 ```sh
