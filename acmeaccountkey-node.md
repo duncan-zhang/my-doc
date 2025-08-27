@@ -34,7 +34,7 @@ source ~/.bashrc
   --accountkey ./account.key
 ```
 - 用account.key原生金鑰，不需使用Base64版
-3. 確認驗證結果
+3. 確認驗證結果  
 如果失敗，會看到類似：
 ```sh
 [Wed Aug 27 05:28:00 PM CST 2025] Please refer to https://curl.haxx.se/libcurl/c/libcurl-errors.html for error code: 60
