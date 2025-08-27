@@ -52,7 +52,7 @@ source ~/.bashrc
   --accountkey ./account.key
 ```
 
-如果成功，會看到類似：
+  如果成功，會看到類似：
 ```sh
 [Wed Aug 27 05:29:27 PM CST 2025] Registering account: https://acme-v02.api.letsencrypt.org/directory
 [Wed Aug 27 05:29:28 PM CST 2025] Registered
