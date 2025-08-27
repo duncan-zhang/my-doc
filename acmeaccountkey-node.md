@@ -35,15 +35,15 @@ source ~/.bashrc
 ```
 - 用account.key原生金鑰，不需使用Base64版
 3. 確認驗證結果  
-- 如果失敗，會看到類似：
+如果失敗，會看到類似：
 ```sh
 [Wed Aug 27 05:28:00 PM CST 2025] Please refer to https://curl.haxx.se/libcurl/c/libcurl-errors.html for error code: 60
 [Wed Aug 27 05:28:00 PM CST 2025] Cannot init API for: https://acme.zerossl.com/v2/DV90.
 [Wed Aug 27 05:28:00 PM CST 2025] Sleeping for 10 seconds and retrying.
 [Wed Aug 27 05:28:13 PM CST 2025] No EAB credentials found for ZeroSSL, let's obtain them
 ```
-  - 此錯誤表示是因與zerossl驗證產生錯誤，直接改用 Let’s Encrypt（繞過 ZeroSSL）
-解決方法
+  - 此錯誤表示是因與zerossl驗證產生錯誤，直接改用 Let’s Encrypt（繞過 ZeroSSL）  
+  解決方法
 ```sh
   ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 
@@ -52,7 +52,7 @@ source ~/.bashrc
   --accountkey ./account.key
 ```
 
-- 如果成功，會看到類似：
+如果成功，會看到類似：
 ```sh
 [Wed Aug 27 05:29:27 PM CST 2025] Registering account: https://acme-v02.api.letsencrypt.org/directory
 [Wed Aug 27 05:29:28 PM CST 2025] Registered
