@@ -122,6 +122,12 @@ WorkingDirectory=/home/fiamiadmin/rocketmq/rocketmq-all-4.7.0-bin-release
 Environment=ROCKETMQ_HOME=/home/fiamiadmin/rocketmq/rocketmq-all-4.7.0-bin-release
 Environment="JAVA_OPT_EXT=-server -Xms2g -Xmx2g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m -XX:+UseConcMarkSweepGC -XX:+UseCMSCompactAtFullCollection -XX:CMSInitiatingOccupancyFraction=70 -XX:+CMSParallelRemarkEnabled -XX:SoftRefLRUPolicyMSPerMB=0 -XX:+CMSClassUnloadingEnabled -XX:SurvivorRatio=8 -XX:-UseParNewGC -verbose:gc -Xloggc:/dev/shm/rmq_srv_gc_%%p_%%t.log -XX:+PrintGCDetails -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=30m -XX:-OmitStackTraceInFastThrow -XX:-UseLargePages"
 ExecStart=/home/fiamiadmin/rocketmq/rocketmq-all-4.7.0-bin-release/bin/mqnamesrv
+ExecStop=/usr/bin/env bash -lc '$ROCKETMQ_HOME/bin/mqshutdown namesrv || true'
+
+TimeoutStopSec=120
+KillMode=control-group
+KillSignal=SIGTERM
+SendSIGKILL=yes
 Restart=always
 RestartSec=3
 LimitNOFILE=65535
@@ -145,27 +151,12 @@ WorkingDirectory=/home/fiamiadmin/rocketmq/rocketmq-all-4.7.0-bin-release
 Environment=ROCKETMQ_HOME=/home/fiamiadmin/rocketmq/rocketmq-all-4.7.0-bin-release
 Environment="JAVA_OPT_EXT=-server -Xms2g -Xmx2g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:G1ReservePercent=25 -XX:InitiatingHeapOccupancyPercent=30 -XX:SoftRefLRUPolicyMSPerMB=0 -verbose:gc -Xloggc:/dev/shm/rmq_broker_gc_%%p_%%t.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCApplicationStoppedTime -XX:+PrintAdaptiveSizePolicy -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=30m -XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch -XX:MaxDirectMemorySize=15g -XX:-UseLargePages -XX:-UseBiasedLocking"
 ExecStart=/home/fiamiadmin/rocketmq/rocketmq-all-4.7.0-bin-release/bin/mqbroker -n 10.0.5.6:9876 -c /home/fiamiadmin/rocketmq/rocketmq-all-4.7.0-bin-release/conf/broker.conf
-Restart=always
-RestartSec=3
-LimitNOFILE=65535
+ExecStop=/usr/bin/env bash -lc '$ROCKETMQ_HOME/bin/mqshutdown broker || true'
 
-[Install]
-WantedBy=multi-user.target
-```
-
-3.建立`sudo cat /etc/systemd/system/rocketmq-console.service`
-
-```sh
-[Unit]
-Description=RocketMQ Console
-After=network.target rocketmq-namesrv.service
-Requires=rocketmq-namesrv.service
-
-[Service]
-Type=simple
-User=fiamiadmin
-WorkingDirectory=/home/fiamiadmin
-ExecStart=/usr/bin/java -jar -Drocketmq.config.namesrvAddr=localhost:9876 -Drocketmq.config.isVIPChannel=false /home/fiamiadmin/rocketmq/rocketmq-console-ng-1.0.1.jar
+TimeoutStopSec=120
+KillMode=control-group
+KillSignal=SIGTERM
+SendSIGKILL=yes
 Restart=always
 RestartSec=3
 LimitNOFILE=65535
