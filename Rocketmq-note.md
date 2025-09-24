@@ -1,8 +1,9 @@
 # Rocketmq 建置說明
 
-##環境設置
+## 環境設置
 
 1. 確認預設 `Java 8`
+
 ```sh
 #已安裝可略
 sudo apt install openjdk-8-jdk -y
@@ -14,8 +15,10 @@ sudo update-java-alternatives -l
 sudo update-java-alternatives -s java-1.8.0-openjdk-amd64
 ```
 
-2. 服務檔案配置
+2.服務檔案配置
+
 執行檔傳入伺服器中
+
 ```sh
 #將rocketmq-all-4.7.0-bin-release.zip與rocketmq-console-ng-1.0.1.jar傳入本機
 mkdir rocketmq
@@ -25,6 +28,7 @@ unzip rocketmq-all-4.7.0-bin-release.zip
 ```
 
 配置`rocketmq/rocketmq-all-4.7.0-bin-release/conf/broker.conf`
+
 ```sh
 ...
 
@@ -43,29 +47,39 @@ useReentrantLockWhenPutMessage=true
 
 ```
 
-3. 配置環境變數
+3.配置環境變數
+
 ```sh
 export ROCKETMQ_HOME=/home/fiamiadmin/rocketmq/rocketmq-all-4.7.0-bin-release
 echo $ROCKETMQ_HOME
 ```
 
-##服務執行
+## 服務執行
+
 下列三個服務皆須可執行
-0. 建立`log folder`
-```sh 
+
+0.建立`log folder`
+
+```sh
 mkdir -p /home/fiamiadmin/logs/rocketmqlogs
 ```
-1. mqnamesrv
+
+1.mqnamesrv
+
 ```sh
 nohup sh $ROCKETMQ_HOME/bin/mqnamesrv \
   > /home/fiamiadmin/logs/rocketmqlogs/mqnamesrv.console 2>&1 &
 ```
-2. mqbroker.console
+
+2.mqbroker.console
+
 ```sh
 nohup sh $ROCKETMQ_HOME/bin/mqbroker -n 10.0.5.6:9876 -c $ROCKETMQ_HOME/conf/broker.conf \
   > /home/fiamiadmin/logs/rocketmqlogs/mqbroker.console 2>&1 &
 ```
-3. rocketmq-console
+
+3.rocketmq-console
+
 ```sh
 nohup java -jar \
 -Drocketmq.config.namesrvAddr=localhost:9876 \
@@ -74,13 +88,15 @@ nohup java -jar \
 > /home/fiamiadmin/logs/rocketmqlogs/console.console 2>&1 &
 ```
 
-4. 檢查服務
-```sh 
+4.檢查服務
+
+```sh
 sudo ps aux |grep rocketmq
 sudo netstat -tulp
 ```
 
-5. 停止服務
+5.停止服務
+
 ```sh
 sh $ROCKETMQ_HOME/bin/mqshutdown namesrv
 sh $ROCKETMQ_HOME/bin/mqshutdown broker
@@ -90,8 +106,10 @@ ps aux |grep Rocketmq
 kill <PID>
 ```
 
-##配置systemd(可選)
-1. 建立`sudo vim /etc/systemd/system/rocketmq-namesrv.service`
+## 配置systemd(可選)
+
+1.建立`sudo vim /etc/systemd/system/rocketmq-namesrv.service`
+
 ```sh
 [Unit]
 Description=RocketMQ NameServer
@@ -112,7 +130,8 @@ LimitNOFILE=65535
 WantedBy=multi-user.target
 ```
 
-2. 建立`sudo vim /etc/systemd/system/rocketmq-broker.service`
+2.建立`sudo vim /etc/systemd/system/rocketmq-broker.service`
+
 ```sh
 [Unit]
 Description=RocketMQ Broker
@@ -134,7 +153,8 @@ LimitNOFILE=65535
 WantedBy=multi-user.target
 ```
 
-3. 建立`sudo cat /etc/systemd/system/rocketmq-console.service`
+3.建立`sudo cat /etc/systemd/system/rocketmq-console.service`
+
 ```sh
 [Unit]
 Description=RocketMQ Console
@@ -154,7 +174,8 @@ LimitNOFILE=65535
 WantedBy=multi-user.target
 ```
 
-4. 服務執行
+4.服務執行
+
 ```sh
 sudo systemctl daemon-reload
 sudo systemctl enable --now rocketmq-namesrv
