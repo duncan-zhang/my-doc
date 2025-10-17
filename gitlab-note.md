@@ -34,7 +34,7 @@ sudo EXTERNAL_URL="https://gitlab.example.com" apt install gitlab-ee=16.2.3-ee.0
 
 ```sh
 # ee repo
-curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
+curl -s https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
 # 直接安裝
 sudo apt-get install gitlab-ce=17.11.1-ce.0
 # Specifiy version: 
