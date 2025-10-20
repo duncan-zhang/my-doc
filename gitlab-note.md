@@ -55,6 +55,17 @@ sudo vim /etc/gitlab/gitlab.rb
 
 - `external_url 'http://<IP or Domain_name>'` 修改連入IP或Domain
 
+啟用https及letsencrypt
+
+```sh
+external_url 'https://<IP or Domain_name>'
+...
+letsencrypt['enable'] = true #啟用憑證申請
+letsencrypt['contact_emails'] = ['youremail@mail.com'] 
+letsencrypt['auto_renew'] =false #停用自動更新
+...
+```
+
 重新配置
 
 ```sh
