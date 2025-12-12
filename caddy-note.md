@@ -382,6 +382,17 @@ curl -i -H "X-Real-IP: 61.219.100.10" http://localhost:8080 #模擬TW_IP訪問
 
 ## Caddy Log
 
+## 輸出log前置建議
+
+原生`/var/log/caddy`路徑輸出會有異常狀況
+
+```sh
+sudo rm -rf /var/log/caddy/
+sudo mkdir -p /var/log/caddy
+sudo chown -R caddy:caddy /var/log/caddy
+sudo chmod -R 755 /var/log/caddy
+```
+
 ## 套件transform-encoder
 
 [transform-encoder github](https://github.com/caddyserver/transform-encoder/tree/master)
