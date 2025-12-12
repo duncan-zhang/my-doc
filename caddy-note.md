@@ -379,3 +379,98 @@ Caddyfile
 ```bash
 curl -i -H "X-Real-IP: 61.219.100.10" http://localhost:8080 #模擬TW_IP訪問
 ```
+
+## Caddy Log
+
+## 套件transform-encoder
+
+[transform-encoder github](https://github.com/caddyserver/transform-encoder/tree/master)
+
+transform-encoder 是 Caddy 的一個外掛，用來：
+
+- 修改 log 輸出格式
+- 將原本的 Caddy 日誌，轉換成自訂文字格式
+- 可以輸出 JSON / key-value / 任意你想要的格式
+- 特別適合 Filebeat + ELK
+
+| 優點                      | 說明                        |
+| ----------------------- | ------------------------- |
+| ✔ 可自訂輸出格式               | 你想變成 JSON / key-value 都可以 |
+| ✔ 避免 Caddy 預設 log 雜亂的格式 | 原生格式難以解析                  |
+| ✔ 適合 Filebeat dissect   | 字串穩定 → dissect 能完美拆解      |
+| ✔ 性能比 JSON encoder 還快   | 不用生成完整 JSON 結構            |
+
+
+1. 安裝 transform-encoder
+
+transform-encoder 並非官方內建模組，需要使用 Caddy Builder 建置自訂版本：
+
+```sh
+xcaddy build \
+    --with github.com/caddyserver/transform-encoder
+```
+
+2. transform-encoder 範例（實作版本）
+
+Caddyfile — transform encoder 自訂 Log 格式
+
+```sh
+
+(log_format) {
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 100MiB
+			roll_keep 10
+			roll_keep_for 168h
+			roll_local_time
+		}
+
+		format transform `"time_local":"{ts}","remote_addr":"{request>remote_ip}","request_method":"{request>method}","uri":"{request>uri}","server_protocol":"{request>proto}","status":"{status}","request_time":"{duration}","http_referer":"{request>headers>Referer>[0]}","http_user_agent":"{request>headers>User-Agent>[0]}","args":"{request>uri_query}","domain":"{request>host}","body_bytes_sent":"{size}","upstream_addr":"{request>headers>X-Forwarded-For>[0]}","upstream_status":"{status}","upstream_response_time":"{latency}"` {
+			time_format "02/Jan/2006:15:04:05 -0700"
+		}
+	}
+}
+```
+
+- time_format : 需轉換，標準go寫法。
+
+transform encoder 會輸出 單行 JSON-like 格式（不是真 JSON，但非常適合filebeat的dissect）：
+
+```sh
+"time_local":"11/Dec/2025:08:20:30 +0000","remote_addr":"1.1.1.1","request_method":"GET","uri":"/api/Game1001/BetOption","server_protocol":"HTTP/2.0","status":"401","request_time":"0.014","http_referer":"https://test.xxx.com/game.html",...
+```
+
+3.Filebeat dissect 拆欄位（關鍵）
+設定如下：
+
+```sh
+processors:
+  - dissect:
+      field: "message"
+      target_prefix: ""
+      tokenizer: '"time_local":"%{time_local}","remote_addr":"%{remote_addr}","request_method":"%{request_method}","uri":"%{uri}","server_protocol":"%{server_protocol}","status":"%{status}","request_time":"%{request_time}","http_referer":"%{http_referer}","http_user_agent":"%{http_user_agent}","args":"%{args}","domain":"%{domain}","body_bytes_sent":"%{body_bytes_sent}","upstream_addr":"%{upstream_addr}","upstream_status":"%{upstream_status}","upstream_response_time":"%{upstream_response_time}"'
+```
+
+這會把 Log 拆成獨立欄位，例如：
+
+```sh
+time_local: 11/Dec/2025:08:20:30 +0000
+remote_addr: 118.163.193.223
+status: 401
+uri: /api/Game1001/BetOption
+body_bytes_sent: 0
+...
+```
+
+結合ELK架構
+
+```text
+Caddy (transform encoder)
+      ↓
+Filebeat (dissect)
+      ↓
+ElasticSearch
+      ↓
+Kibana Dashboard
+```
+
