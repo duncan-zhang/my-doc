@@ -401,7 +401,7 @@ transform-encoder 是 Caddy 的一個外掛，用來：
 | ✔ 性能比 JSON encoder 還快   | 不用生成完整 JSON 結構            |
 
 
-1. 安裝 transform-encoder
+### 1. 安裝 transform-encoder
 
 transform-encoder 並非官方內建模組，需要使用 Caddy Builder 建置自訂版本：
 
@@ -410,7 +410,7 @@ xcaddy build \
     --with github.com/caddyserver/transform-encoder
 ```
 
-2. transform-encoder 範例（實作版本）
+### 2. transform-encoder 範例（實作版本）
 
 Caddyfile — transform encoder 自訂 Log 格式
 
@@ -440,7 +440,7 @@ transform encoder 會輸出 單行 JSON-like 格式（不是真 JSON，但非常
 "time_local":"11/Dec/2025:08:20:30 +0000","remote_addr":"1.1.1.1","request_method":"GET","uri":"/api/Game1001/BetOption","server_protocol":"HTTP/2.0","status":"401","request_time":"0.014","http_referer":"https://test.xxx.com/game.html",...
 ```
 
-3.Filebeat dissect 拆欄位（關鍵）
+### 3. Filebeat dissect 拆欄位（關鍵）
 設定如下：
 
 ```sh
@@ -462,7 +462,7 @@ body_bytes_sent: 0
 ...
 ```
 
-結合ELK架構
+### 結合ELK架構
 
 ```text
 Caddy (transform encoder)
