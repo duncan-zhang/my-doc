@@ -2,8 +2,7 @@
 
 ## 維運與系統管理整理文件
 
-網站網址:
-https://ccrab.rcec.sinica.edu.tw/
+網址:https://ccrab.rcec.sinica.edu.tw/
 
 ## 一、系統基本資訊（System Overview）
 
