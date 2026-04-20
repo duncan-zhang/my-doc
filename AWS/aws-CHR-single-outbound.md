@@ -51,19 +51,19 @@ add chain=srcnat action=masquerade out-interface=ether1 comment="Allow Subnet to
         * 允許你的管理 IP (WinBox 8291, SSH 22)
     * **Outbound**: 允許 `0.0.0.0/0` (All Traffic)
 
-## 4. 驗證測試步驟
+## 4. 測試結果
 
 ### 第一階段：連通性測試
 在 **Amazon Linux** 上執行：
-1.  `ping 8.8.8.8`：檢查是否能成功連外。
+1.  `ping 8.8.8.8` 可ping通
 
 ### 第二階段：出口 IP 驗證 (Identity)
 在 **Amazon Linux** 上執行：
 * **指令**: `curl ifconfig.me`
-* **預期結果**: 回傳的 IP 必須是 **CHR 的 Elastic IP (EIP)**。
 * **意義**: 證明 SNAT (Source NAT) 成功，外部伺服器只會看到 Router 的地址。
+* **結果**: 回傳的 IP 是 **CHR 的 Elastic IP (EIP)**。
 
-
----
+## 5. 結論與分析
+* 測試結果符合預期，可透過CHR控制對外上網控制。
 
 
