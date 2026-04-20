@@ -150,3 +150,50 @@ done
 * **路由對稱**：使用 `rp-filter=loose` 解決非對稱路由導致的連線中斷問題。
 * **白名單**：Mangle 第一條規則的內網白名單（10.0.0.0/8）不可省略，否則會影響 EKS 內部 Service 與 API Server 的通訊。
 
+---
+
+## 6. 第二階段測試
+* **測試目的**: 僅限制特定來源ip對外上網是輪詢
+* **環境配置**: 與上階段測試環境完全相同
+    - 確認test-alpine(10.0.20.20)
+    - 額外添加一台linux(10.0.50.253)，獨立vm 非k8s
+* **CHR修改配置**:
+  - 1.  Disable PCC分流
+    ```sh
+    /ip firewall mangle
+    disable [find per-connection-classifier~"3/"]
+    ```
+  - 2. 建立ip address list
+    ```sh
+    /ip firewall address-list
+    add list=LoadBalance_Group address=10.0.20.20
+    add list=LoadBalance_Group address=10.0.50.253
+    ```
+  - 3. 調整mangle
+    ```sh
+    /ip firewall mangle
+    add chain=prerouting action=mark-connection new-connection-mark=WAN1_conn passthrough=yes \
+    src-address-list=LoadBalance_Group dst-address-type=!local per-connection-classifier=both-addresses-and-ports:3/0 \
+    comment="Specific-IP-PCC-WAN1"
+
+    add chain=prerouting action=mark-connection new-connection-mark=WAN2_conn passthrough=yes \
+    src-address-list=LoadBalance_Group dst-address-type=!local per-connection-classifier=both-addresses-and-ports:3/1 \
+    comment="Specific-IP-PCC-WAN2"
+    
+    add chain=prerouting action=mark-connection new-connection-mark=WAN3_conn passthrough=yes \
+    src-address-list=LoadBalance_Group dst-address-type=!local per-connection-classifier=both-addresses-and-ports:3/2 \
+    comment="Specific-IP-PCC-WAN3"
+    ```
+    - 這三筆必須順序要在`mark routing`之前
+
+* **測試結果**:
+  1. linux(10.0.50.253) 可輪詢wan ip
+  2. test-alpine(10.0.20.20) 無法輪詢wan ip
+  3. 一般pod或vm 單一wan ip
+
+* **結論與分析**:
+  1. **10.0.50.253 成功原因**: 獨立 VM 流量直接到達 CHR，來源 IP 未被變更，完美匹配 `LoadBalance_Group`。
+  2. **10.0.20.20 失敗原因**: 
+    - **K8s SNAT 現象**: Pod 流量在經過 Node 轉發時，來源 IP 被換成 Node IP。
+    - **匹配失效**: CHR 接收到的封包來源非 10.0.20.20，導致直接跳過 PCC 規則進入 Main 路由表。
+  3. **解決策略**: 若要控制 Pod 輪詢，應改為管控 K8s Node IP 或在 K8s 層級進行流量標記。
