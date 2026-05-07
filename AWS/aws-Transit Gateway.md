@@ -53,7 +53,7 @@ AWS Transit Gateway 扮演的是「雲端虛擬轉運站」的角色，透過中
 
 # 2. 配置介紹：跨區域 TGW 串接實作
 
-![TransitGateway.drawio.png](png/TransitGateway.drawio.png)
+![TransitGateway.drawio.png](png/TransitGateway.png)
 
 💡 **實驗目標**：
 
