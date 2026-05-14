@@ -1,0 +1,60 @@
+# github https://github.com/provectus/kafka-ui/blob/master/documentation/compose/kafka-ui-auth-context.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-ui-admin
+  namespace: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-ui-admin
+  template:
+    metadata:
+      labels:
+        app: kafka-ui-admin
+    spec:
+      containers:
+      - name: kafka-ui-admin
+        image: provectuslabs/kafka-ui:v0.7.2
+        imagePullPolicy: IfNotPresent
+        ports:
+          - name: ui
+            containerPort: 8080
+            protocol: TCP
+        env:
+          - name: KAFKA_CLUSTERS_0_NAME
+            value: "kafka-cluster"
+          - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+            value: "kafka-kafka-bootstrap.kafka.svc.cluster.local:9092"
+          - name: KAFKA_CLUSTERS_0_METRICS_PORT
+            value: "9404"
+          - name: SERVER_SERVLET_CONTEXT_PATH
+            value: "/"
+          - name: AUTH_TYPE
+            value: "DISABLED"
+            # value: "LOGIN_FORM"
+          # - name: SPRING_SECURITY_USER_NAME
+          #   value: "admin"
+          # - name: SPRING_SECURITY_USER_PASSWORD
+          #   value: "password"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 2
+            memory: 4Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-ui-admin
+  namespace: kafka
+spec:
+  selector:
+    app: kafka-ui-admin
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

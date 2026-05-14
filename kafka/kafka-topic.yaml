@@ -1,0 +1,13 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: test-topic
+  namespace: kafka
+  labels:
+    strimzi.io/cluster: kafka # 需對應你的叢集名稱
+spec:
+  partitions: 3
+  replicas: 3
+  config:
+    retention.ms: 1800000  # 資料保留 30 分鐘 (1,800,000 ms)
+    cleanup.policy: delete # 預設值，超過時間即刪除 Log 檔案
